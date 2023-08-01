@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+
+    <springProperty name="appName" source="spring.application.name" defaultValue="template-project"/>
+    <contextName>${appName}</contextName>
+
+    <springProfile name="dev">
+        <property name="LOG_LEVEL" value="${LOG_LEVEL:-TRACE}"/>
+    </springProfile>
+
+    <appender name="CONSOLE-JSON" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <contextName>
+                    <fieldName>appName</fieldName>
+                </contextName>
+                <timestamp>
+                    <fieldName>timestamp</fieldName>
+                    <timeZone>UTC</timeZone>
+                </timestamp>
+                <loggerName>
+                    <fieldName>logger</fieldName>
+                </loggerName>
+                <logLevel>
+                    <fieldName>level</fieldName>
+                </logLevel>
+                <callerData>
+                    <classFieldName>class</classFieldName>
+                    <methodFieldName>method</methodFieldName>
+                    <lineFieldName>line</lineFieldName>
+                    <fileFieldName>file</fileFieldName>
+                </callerData>
+                <threadName>
+                    <fieldName>thread</fieldName>
+                </threadName>
+                <mdc/>
+                <arguments>
+                    <includeNonStructuredArguments>false</includeNonStructuredArguments>
+                </arguments>
+                <throwableClassName>
+                    <fieldName>throwableClassName</fieldName>
+                </throwableClassName>
+                <throwableRootCauseClassName>
+                    <fieldName>throwableRootCauseClassName</fieldName>
+                </throwableRootCauseClassName>
+                <rootStackTraceElement>
+                    <fieldName>rootStackTraceElement</fieldName>
+                    <classFieldName>class</classFieldName>
+                    <methodFieldName>method</methodFieldName>
+                </rootStackTraceElement>
+                <stackTrace>
+                    <fieldName>stack</fieldName>
+                </stackTrace>
+                <message>
+                    <fieldName>message</fieldName>
+                </message>
+            </providers>
+        </encoder>
+    </appender>
+
+    <!-- LOGGERS -->
+    <logger name="com.temp" level="${LOG_LEVEL}" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+</configuration>
