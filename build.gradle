@@ -1,16 +1,93 @@
+
+buildscript {
+    ext {
+        springDocVersion = "1.6.15"
+        lombokVersion = "1.18.26"
+        springCloudVersion = "2022.0.4"
+        springBootVersion = '3.1.2'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
 plugins {
+    id "net.researchgate.release" version "3.0.2"
+    id 'org.springframework.boot' version "${springBootVersion}"
+    id 'io.spring.dependency-management' version '1.1.0'
     id 'java'
 }
 
-group 'com.temp'
+apply plugin: "java"
+apply plugin: "idea"
+apply plugin: "org.springframework.boot"
+apply plugin: "io.spring.dependency-management"
+
+group = 'com.temp'
+sourceCompatibility = 17
+targetCompatibility = 17
+
+
+bootRun {
+    systemProperty "spring.profiles.active", System.properties["spring.profiles.active"]
+}
+
+processResources {
+    filesMatching("**/*.yml") {
+        expand project.properties
+    }
+}
 
 repositories {
     mavenCentral()
 }
 
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
 dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.2'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
+
+    //SpringBoot base
+    implementation ("org.springframework.boot:spring-boot-starter-actuator")
+    implementation ("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation ("org.springframework.boot:spring-boot-starter-web")
+
+    //Spring Cloud
+    implementation ("org.springframework.cloud:spring-cloud-starter-openfeign")
+    implementation ("org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j")
+    implementation ("org.springframework.cloud:spring-cloud-starter-bootstrap")
+
+    //Spring Security
+    implementation ("org.springframework.boot:spring-boot-starter-security:${springBootVersion}")
+
+    //Spring validation
+    implementation ("org.springframework.boot:spring-boot-starter-validation:${springBootVersion}")
+
+    //Swagger Docs
+    implementation ("org.springdoc:springdoc-openapi-ui:${springDocVersion}")
+
+    //Lombok
+    implementation ("org.projectlombok:lombok:${lombokVersion}")
+    annotationProcessor ("org.projectlombok:lombok:${lombokVersion}")
+
+    //JDBC
+    implementation ("com.microsoft.sqlserver:mssql-jdbc")
+    implementation ("org.hibernate.validator:hibernate-validator:8.0.0.Final")
+
+    // In memory database
+    implementation ("com.h2database:h2:2.2.220")
+    testImplementation ("com.h2database:h2:2.2.220")
+
+    //Tests
+    testImplementation ("org.springframework.boot:spring-boot-starter-test")
+    testImplementation ("org.projectlombok:lombok:${lombokVersion}")
+    testAnnotationProcessor ("org.projectlombok:lombok:${lombokVersion}")
 }
 
 test {
