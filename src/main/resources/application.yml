@@ -1,3 +1,12 @@
 server:
   port: 9011
   shutdown: graceful
+
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: 721737e310629096d969
+            client-secret: 17337448b73ef862daeb78649b553ad8e3c0e3ee
